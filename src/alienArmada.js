@@ -189,6 +189,37 @@ function playGame()
 
   //Move the cannon and keep it within the screen boundaries
   cannon.x = Math.max(0, Math.min(cannon.x + cannon.vx, canvas.width - cannon.width));
+
+  //Move the missiles
+  for(var i = 0; i < missiles.length; i++)
+  {
+    let missile = missiles[i];
+
+    //Move it up the screen
+    missile.y += missile.vy;
+
+    //remove the missile if it crosses the top of the screen
+    if(missile.y < 0 - missile.height)
+    {
+      //Remove the missile from the missiles array
+      removeObject(missile, missiles);
+
+      //Remove the missile from the sprites array
+      removeObject(missile, sprites);
+
+      //Reduce the loop counter by 1 to compensate for the removed element
+      i--;
+    }
+  }
+}
+
+function removeObject(objectToRemove, array)
+{
+  let i = array.indexOf(objectToRemove);
+  if (i !== -1)
+  {
+    array.splice(i, 1);
+  }
 }
 
 function endGame()
