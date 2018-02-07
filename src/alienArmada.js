@@ -17,6 +17,13 @@ let missiles = [];
 let shoot = false;
 let spaceKeyIsDown = false;
 
+//Array to store the aliens
+let aliens = [];
+
+//Variables to control alien creation
+let alienFrequency = 100;
+let alienTimer = 0;
+
 //Create the background
 let background = Object.create(spriteObject);
 background.x = 0,
@@ -161,6 +168,27 @@ function fireMissile()
   missiles.push(missile);
 }
 
+function makeAlien()
+{
+  //Create the alien
+  let alien = Object.create(alienObject);
+  alien.sourceX = 32;
+
+  //Set its Y position above the top screen boundary
+  alien.y = 0 - alien.height;
+
+  //Assign the alien a random X position
+  let randomPosition = Math.floor(Math.random() * (canvas.width / alien.width));
+  alien.x = randomPosition * alien.width;
+
+  //Set iys speed
+  alien.vy = 1;
+
+  //Push the alien into both the sprites and aliens arrays
+  sprites.push(alien);
+  aliens.push(alien);
+}
+
 function playGame()
 {
   //LEFT
@@ -211,6 +239,41 @@ function playGame()
       i--;
     }
   }
+
+  //Add one to the alienTimer
+  alienTimer++;
+
+  //Make a new alien if the alienTimer equals the alienFrequency
+  if(alienTimer === alienFrequency)
+  {
+    makeAlien();
+    alienTimer = 0;
+
+    //Reduce alienFrequency by one to gradually increase the freqency that the aliens are created
+    if(alienFrequency > 2)
+    {
+      alienFrequency--;
+    }
+  }
+
+  //Loop through the aliens
+  for(let i = 0; i < aliens.length; i++)
+  {
+    let alien = aliens[i];
+
+    if(alien.state === alien.NORMAL)
+    {
+      //Move the alien if its state is NORMAL
+      alien.y += alien.vy;
+    }
+
+    //Check if the alien has crossed the bottom of the screen
+    if(alien.y >canvas.height + alien.height)
+    {
+      //End the game if an alien has reached earth
+      gameState = OVER;
+    }
+  }
 }
 
 function removeObject(objectToRemove, array)
@@ -225,6 +288,7 @@ function removeObject(objectToRemove, array)
 function endGame()
 {
   //EndGame
+  console.log("Game Over!");
 }
 
 function render()
